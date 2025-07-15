@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Temperature Converter</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="theme-toggle">
+      <button id="toggleTheme">🌙 Dark Mode</button>
+    </div>
+    <div class="language-select">
+  🌐 Language:
+  <select id="languageSelect">
+    <option value="en">English</option>
+    <option value="hi">हिन्दी</option>
+    <option value="mr">मराठी</option>
+  </select>
+</div>
+
+    
+    <h1>🌡️ Temperature Converter</h1>
+
+    <input type="number" id="temperatureInput" placeholder="Enter Temperature" />
+    <button id="micBtn" title="Speak Temperature">
+  <span class="mic-icon">🎙️</span>
+</button>
+
+
+
+
+    <div class="unit-selection">
+      <label><input type="radio" name="unit" value="celsius" checked /> Celsius</label>
+      <label><input type="radio" name="unit" value="fahrenheit" /> Fahrenheit</label>
+      <label><input type="radio" name="unit" value="kelvin" /> Kelvin</label>
+    </div>
+
+    <!-- ✅ Updated: Button wrapper for ripple effect -->
+    <div class="button-wrapper">
+      <button id="convertBtn">Convert</button>
+    </div>
+
+    <div class="result" id="resultDisplay"></div>
+    <div class="action-buttons">
+  <button id="clearBtn">Clear</button>
+  <div class="action-buttons">
+</div>
+
+</div>
+
+<div class="history">
+  <h3>Conversion History</h3>
+  <ul id="historyList"></ul>
+  <button id="clearHistoryBtn">Clear History</button>
+</div>
+
+  </div>
+  
+
+  <div id="toast" class="toast">⚠️ Invalid input! Please enter a number.</div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+<script>
+  const micBtn = document.getElementById("micBtn");
+  const temperatureInput = document.getElementById("temperatureInput");
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (SpeechRecognition) {
+    const recognition = new SpeechRecognition();
+    recognition.lang = "en-US";
+    recognition.interimResults = false;
+
+    micBtn.addEventListener("click", () => {
+      recognition.start();
+    });
+
+    recognition.onresult = (event) => {
+      const spokenText = event.results[0][0].transcript;
+      const number = parseFloat(spokenText);
+      if (!isNaN(number)) {
+        temperatureInput.value = number;
+      } else {
+        showToast("Please say a valid number.");
+      }
+    };
+
+    recognition.onerror = () => {
+      showToast("Could not recognize your speech.");
+    };
+  } else {
+    micBtn.disabled = true;
+    showToast("Speech recognition not supported in this browser.");
+  }
+</script>
+<script>
+  function speakText(text) {
+    const synth = window.speechSynthesis;
+    const utter = new SpeechSynthesisUtterance(text);
+    synth.speak(utter);
+  }
+</script>
